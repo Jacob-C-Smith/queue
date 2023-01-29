@@ -1,4 +1,4 @@
-#include "include\queue\queue.h"
+#include <queue/queue.h>
 
 int queue_create(queue** pp_queue)
 {
@@ -17,14 +17,16 @@ int queue_create(queue** pp_queue)
 	// Check memory
 	{
 		#ifndef NDEBUG
-		if ( ret == (void *)0 )
-			goto no_mem;
+			if ( ret == (void *)0 )
+				goto no_mem;
 		#endif
 	}
 
+	// Return the queue
 	*pp_queue = ret;
 
-	return 0;
+	// Success
+	return 1;
 
 	// Error handling
 	{
@@ -33,8 +35,10 @@ int queue_create(queue** pp_queue)
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"pp_queue\" in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Queue] Null pointer provided for \"pp_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+
+			// Error
 			return 0;
 		}
 
@@ -42,8 +46,10 @@ int queue_create(queue** pp_queue)
 		{
 			no_mem:
 				#ifndef NDEBUG
-					printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+
+			// Error
 			return 0;
 		}
 	}
@@ -51,6 +57,7 @@ int queue_create(queue** pp_queue)
 
 int queue_construct(queue** pp_queue, size_t size)
 {
+
 	// Argument check
 	{
 		#ifndef NDEBUG
@@ -65,19 +72,31 @@ int queue_construct(queue** pp_queue, size_t size)
 	queue *i_queue = 0;
 
 	// Allocate for a queue
-	queue_create(pp_queue);
+	if ( queue_create(pp_queue) == 0 ) 
+		goto failed_to_create_queue;
 
+	// Get a pointer to the allocated memory
 	i_queue = *pp_queue;
 
 	// Construct the queue
 	{
 		i_queue->contents = calloc(size, sizeof(void *));
+
+		// Check memory
+		{
+			#ifndef NDEBUG
+				if ( i_queue->contents == (void *)0 )
+					goto no_mem;
+			#endif
+		}
+
 		i_queue->front    = -1;
 		i_queue->rear     = -1;
 		i_queue->size     = size;
 	}
 
-	return 0;
+	// Success
+	return 1;
 
 	// Error handling
 	{
@@ -86,14 +105,29 @@ int queue_construct(queue** pp_queue, size_t size)
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"pp_queue\" in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Queue] Null pointer provided for \"pp_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+			
+			// Error
 			return 0;
 
 			no_queue_size:
 				#ifndef NDEBUG
-					printf("[Queue] \"size\" must be greater than or equal to 1 in call to function \"%s\"\n", __FUNCSIG__);
+					printf("[Queue] \"size\" must be greater than or equal to 1 in call to function \"%s\"\n", __FUNCTION__);
 				#endif
+			
+			// Error
+			return 0;
+		}
+
+		// Queue errors
+		{
+			failed_to_create_queue:
+				#ifndef NDEBUG
+					printf("[Queue] Failed to create queue in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+
+			// Error
 			return 0;
 		}
 
@@ -101,8 +135,10 @@ int queue_construct(queue** pp_queue, size_t size)
 		{
 			no_mem:
 				#ifndef NDEBUG
-					printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+			
+			// Error
 			return 0;
 		}
 	}
@@ -110,6 +146,7 @@ int queue_construct(queue** pp_queue, size_t size)
 
 void* queue_front(queue* p_queue)
 {
+
 	// Argument check
 	{
 		#ifndef NDEBUG
@@ -120,6 +157,7 @@ void* queue_front(queue* p_queue)
 		#endif
 	}
 
+	// Return the element at the front of the queue
 	return p_queue->contents[p_queue->front];
 
 	// Error handling
@@ -129,14 +167,18 @@ void* queue_front(queue* p_queue)
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+			
+			// Error
 			return 0;
 
 			no_queue_size:
 				#ifndef NDEBUG
-					printf("[Queue] \"size\" must be greater than or equal to 1 in call to function \"%s\"\n", __FUNCSIG__);
+					printf("[Queue] \"size\" must be greater than or equal to 1 in call to function \"%s\"\n", __FUNCTION__);
 				#endif
+			
+			// Error
 			return 0;
 		}
 	}
@@ -144,6 +186,7 @@ void* queue_front(queue* p_queue)
 
 void* queue_rear(queue* p_queue)
 {
+
 	// Argument check
 	{
 		#ifndef NDEBUG
@@ -152,6 +195,7 @@ void* queue_rear(queue* p_queue)
 		#endif
 	}
 
+	// Return the element at the rear of the queue
 	return p_queue->contents[p_queue->rear];
 
 	// Error handling
@@ -161,8 +205,10 @@ void* queue_rear(queue* p_queue)
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+
+			// Error
 			return 0;
 		}
 	}
@@ -170,6 +216,7 @@ void* queue_rear(queue* p_queue)
 
 int queue_enqueue(queue* p_queue, void* data)
 {
+
 	// Argument check
 	{
 		#ifndef NDEBUG
@@ -179,7 +226,7 @@ int queue_enqueue(queue* p_queue, void* data)
 	}
 
 	// Check for overflow
-	if (queue_full(p_queue))
+	if ( queue_full(p_queue) )
 		goto queue_overflow;
 
 	// Has the queue been reset?
@@ -189,7 +236,8 @@ int queue_enqueue(queue* p_queue, void* data)
 	// Add the data to the queue
 	p_queue->contents[++p_queue->rear] = data;
 
-	return 0;
+	// Success
+	return 1;
 		
 	// Error handling
 	{
@@ -198,14 +246,18 @@ int queue_enqueue(queue* p_queue, void* data)
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+
+			// Error
 			return 0;
 
 			queue_overflow:
 				#ifndef NDEBUG
-					printf("[Queue] Queue overflow in call to function \"%s\"\n", __FUNCSIG__);
+					printf("[Queue] Queue overflow in call to function \"%s\"\n", __FUNCTION__);
 				#endif
+			
+			// Error
 			return 0;
 		}
 	}
@@ -225,7 +277,7 @@ void* queue_dequeue ( queue* p_queue )
 	// Initialized data
 	void* ret = 0;
 
-	//Check for an underflow
+	// Check for an underflow
 	if ( queue_empty(p_queue) )
 		goto queue_underflow;
 
@@ -237,9 +289,9 @@ void* queue_dequeue ( queue* p_queue )
 		p_queue->front = -2, 
 		p_queue->rear  = -1;
 
-	
 	p_queue->front++;
 
+	// Return a pointer to the element
 	return ret;
 
 	// Error handling
@@ -249,18 +301,21 @@ void* queue_dequeue ( queue* p_queue )
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+
+			// Error
 			return 0;
 
 			queue_underflow:
 				#ifndef NDEBUG
-					printf("[Queue] Queue underflow in call to function \"%s\"\n", __FUNCSIG__);
+					printf("[Queue] Queue underflow in call to function \"%s\"\n", __FUNCTION__);
 				#endif
+
+			// Error
 			return 0;
 		}
 	}
-	return 0;
 }
 
 bool queue_empty(queue* p_queue)
@@ -274,6 +329,7 @@ bool queue_empty(queue* p_queue)
 		#endif
 	}
 
+	// Return true if the queue is empty, false otherwise
 	return (p_queue->front == -1) ? true : false;
 	
 	// Error handling
@@ -283,8 +339,10 @@ bool queue_empty(queue* p_queue)
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+
+			// Error
 			return 0;
 		}
 	}
@@ -300,7 +358,8 @@ bool queue_full(queue* p_queue)
 				goto no_queue;
 		#endif
 	}
-
+	
+	// Return true if queue is full, false otherwise
 	return (p_queue->front == 0 && p_queue->rear == p_queue->size -1 ) ? true : false;
 
 	// Error handling
@@ -310,8 +369,10 @@ bool queue_full(queue* p_queue)
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+
+			// Error
 			return 0;
 		}
 	}
@@ -328,9 +389,14 @@ int queue_destroy(queue* p_queue)
 		#endif
 	}
 
+	// Free the queue contents
 	free(p_queue->contents);
+
+	// Free the queue
 	free(p_queue);
-	return 0;
+
+	// Success
+	return 1;
 
 	// Error handling
 	{
@@ -339,8 +405,10 @@ int queue_destroy(queue* p_queue)
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCSIG__);
+					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+
+			// Error
 			return 0;
 		}
 	}

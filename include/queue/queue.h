@@ -4,7 +4,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#ifdef _WIN64
 #define DLLEXPORT extern __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
 
 struct queue_s
 {
