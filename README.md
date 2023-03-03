@@ -1,6 +1,6 @@
 # queue
 [![CMake](https://github.com/Jacob-C-Smith/queue/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/queue/actions/workflows/cmake.yml)
- 
+
  A minimal queue implementation written in C. 
  
  > 1 [Download](#download)
