@@ -1,5 +1,13 @@
 #include <queue/queue.h>
 
+struct queue_s
+{
+	void   **contents;
+	size_t   size;
+	size_t   front;
+	size_t   rear;
+};
+
 int queue_create(queue** pp_queue)
 {
 
@@ -378,16 +386,22 @@ bool queue_full(queue* p_queue)
 	}
 }
 
-int queue_destroy(queue* p_queue)
+int queue_destroy(queue **pp_queue)
 {
 
 	// Argument check
 	{
 		#ifndef NDEBUG
-			if (p_queue == (void *)0)
+			if (pp_queue == (void *)0)
 				goto no_queue;
 		#endif
 	}
+
+	// Initialized data
+	queue *p_queue = *pp_queue;
+
+	// No more queue for end user
+	*pp_queue = 0;
 
 	// Free the queue contents
 	free(p_queue->contents);
@@ -405,7 +419,7 @@ int queue_destroy(queue* p_queue)
 		{
 			no_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
+					printf("[Queue] Null pointer provided for \"pp_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
 
 			// Error
