@@ -151,8 +151,14 @@ int queue_from_contents ( queue **pp_queue, void **pp_contents, size_t size )
 			goto no_queue_contents;
 	}
 
-	if (queue_construct(pp_queue))
-
+	// Construct a queue
+	if ( queue_construct(pp_queue) == 0 ) 
+		{ goto failed_to_construct_queue; }
+	
+	// Add each element in pp_contents
+	for (size_t i = 0; i < size; i++)
+		{ queue_enqueue(*pp_queue, pp_contents[i]); }
+	
 	// Success
 	return 1;
 
@@ -172,6 +178,17 @@ int queue_from_contents ( queue **pp_queue, void **pp_contents, size_t size )
 			no_queue_contents:
 				#ifndef NDEBUG
 					printf("[Queue] Queue has no contents in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+			
+			// Error
+			return 0;
+		}
+
+		// Queue errors
+		{
+			failed_to_construct_queue:
+				#ifndef NDEBUG
+					printf("[Queue] Failed to construct queue in call to function \"%s\"\n", __FUNCTION__);
 				#endif
 			
 			// Error

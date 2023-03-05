@@ -52,9 +52,9 @@ int total_tests      = 0,
     ephemeral_fails  = 0;
 
 // Forward declarations
-int run_tests               ();
-int print_final_summary     ();
-int print_test              ( const char  *scenario_name, const char *test_name, bool passed );
+int run_tests           ( void );
+int print_final_summary ( void );
+int print_test          ( const char  *scenario_name, const char *test_name, bool passed );
 
 bool test_front   ( int (*queue_constructor)(queue **), void *expected_value  , result_t expected );
 bool test_rear    ( int (*queue_constructor)(queue **), void *expected_value  , result_t expected );

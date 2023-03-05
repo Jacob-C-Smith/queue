@@ -6,8 +6,9 @@ int main ( int argc, const char *argv[] )
 {
 
 	// Initialized data
-	queue *p_queue = 0;
-	void  *value   = 0;
+	queue  *p_queue       = 0;
+	void   *value         = 0;
+	char   *pp_contents[] = { "First!", "Second!", "Third!", "Fourth!", "Fifth!", "Sixth!", 0x0 };
 
 	// Construct a queue
 	queue_construct(&p_queue);
@@ -23,12 +24,7 @@ int main ( int argc, const char *argv[] )
 	printf("\n");
 
 	// Fill up the queue
-	queue_enqueue(p_queue, "First!");
-	queue_enqueue(p_queue, "Second!");
-	queue_enqueue(p_queue, "Third!");
-	queue_enqueue(p_queue, "Fourth!");
-	queue_enqueue(p_queue, "Fifth!");
-	queue_enqueue(p_queue, "Sixth!");
+	queue_from_contents(&p_queue, pp_contents, 6);
 	queue_dequeue(p_queue, 0);
 	queue_dequeue(p_queue, 0);
 	queue_dequeue(p_queue, 0);
