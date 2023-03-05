@@ -1,14 +1,19 @@
 #include <queue/queue.h>
 
-struct queue_s
+struct queue_node_s
 {
-	void   **contents;
-	size_t   size;
-	size_t   front;
-	size_t   rear;
+	void              *content;
+	struct queue_node *prev,
+	                  *next;
 };
 
-int queue_create(queue** pp_queue)
+struct queue_s
+{
+	struct queue_node *front,
+                      *rear;
+};
+
+int  queue_create ( queue **pp_queue)
 {
 
 	// Argument check
@@ -62,8 +67,8 @@ int queue_create(queue** pp_queue)
 		}
 	}
 }
-
-int queue_construct(queue** pp_queue, size_t size)
+ 
+int  queue_construct ( queue **pp_queue )
 {
 
 	// Argument check
@@ -71,8 +76,6 @@ int queue_construct(queue** pp_queue, size_t size)
 		#ifndef NDEBUG
 			if(pp_queue == (void *)0)
 				goto no_queue;
-			if (size == 0)
-				goto no_queue_size;
 		#endif
 	}
 
@@ -85,23 +88,6 @@ int queue_construct(queue** pp_queue, size_t size)
 
 	// Get a pointer to the allocated memory
 	i_queue = *pp_queue;
-
-	// Construct the queue
-	{
-		i_queue->contents = calloc(size, sizeof(void *));
-
-		// Check memory
-		{
-			#ifndef NDEBUG
-				if ( i_queue->contents == (void *)0 )
-					goto no_mem;
-			#endif
-		}
-
-		i_queue->front    = -1;
-		i_queue->rear     = -1;
-		i_queue->size     = size;
-	}
 
 	// Success
 	return 1;
@@ -151,22 +137,24 @@ int queue_construct(queue** pp_queue, size_t size)
 		}
 	}
 }
-
-void* queue_front(queue* p_queue)
+ 
+int queue_from_contents ( queue **pp_queue, void **pp_contents, size_t size )
 {
 
 	// Argument check
 	{
-		#ifndef NDEBUG
-			if(p_queue == (void *)0)
-				goto no_queue;
-			if (p_queue->size == 0)
-				goto no_queue_size;
-		#endif
+		if ( pp_queue == (void *)0)
+			goto no_queue;
+		if ( pp_contents == (void *)0)
+			goto no_queue_contents;
+		if ( size == 0 )
+			goto no_queue_contents;
 	}
 
-	// Return the element at the front of the queue
-	return p_queue->contents[p_queue->front];
+	if (queue_construct(pp_queue))
+
+	// Success
+	return 1;
 
 	// Error handling
 	{
@@ -181,9 +169,9 @@ void* queue_front(queue* p_queue)
 			// Error
 			return 0;
 
-			no_queue_size:
+			no_queue_contents:
 				#ifndef NDEBUG
-					printf("[Queue] \"size\" must be greater than or equal to 1 in call to function \"%s\"\n", __FUNCTION__);
+					printf("[Queue] Queue has no contents in call to function \"%s\"\n", __FUNCTION__);
 				#endif
 			
 			// Error
@@ -192,19 +180,26 @@ void* queue_front(queue* p_queue)
 	}
 }
 
-void* queue_rear(queue* p_queue)
+
+int  queue_front ( queue* p_queue, void **pp_value )
 {
 
 	// Argument check
 	{
-		#ifndef NDEBUG
-			if(p_queue == (void *)0)
-				goto no_queue;
-		#endif
+		if ( p_queue == (void *)0)
+			goto no_queue;
+		if ( pp_value == (void *)0)
+			goto no_ret;
+		if ( queue_empty(p_queue) )
+			goto no_queue_contents;
 	}
 
-	// Return the element at the rear of the queue
-	return p_queue->contents[p_queue->rear];
+	*pp_value = ((struct queue_node_s *)(p_queue->front))->content;
+
+	no_ret:
+	
+	// Exit
+	return 1;
 
 	// Error handling
 	{
@@ -215,14 +210,68 @@ void* queue_rear(queue* p_queue)
 				#ifndef NDEBUG
 					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
 				#endif
+			
+			// Error
+			return 0;
 
+			no_queue_contents:
+				#ifndef NDEBUG
+					printf("[Queue] Queue has no contents in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+			
 			// Error
 			return 0;
 		}
 	}
 }
+ 
+int  queue_rear ( queue* p_queue, void **pp_value)
+{
 
-int queue_enqueue(queue* p_queue, void* data)
+	// Argument check
+	{
+		if ( p_queue == (void *) 0 )
+			goto no_queue;
+		if ( pp_value == (void *) 0 )
+			goto no_ret;
+		if ( queue_empty(p_queue) )
+			goto no_queue_contents;
+	}
+
+	//while(((struct queue_node_s *)p_queue->rear)->next) { p_queue->rear = ((struct queue_node_s *)p_queue->rear)->next; };
+
+	*pp_value = ((struct queue_node_s *)(p_queue->rear))->content;
+
+	no_ret:
+	
+	// Exit
+	return 1;
+
+	// Error handling
+	{
+
+		// Argument errors
+		{
+			no_queue:
+				#ifndef NDEBUG
+					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
+				#endif
+			
+			// Error
+			return 0;
+
+			no_queue_contents:
+				#ifndef NDEBUG
+					printf("[Queue] Queue has no contents in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+			
+			// Error
+			return 0;
+		}
+	}
+}
+ 
+int  queue_enqueue ( queue* p_queue, void* data)
 {
 
 	// Argument check
@@ -231,18 +280,27 @@ int queue_enqueue(queue* p_queue, void* data)
 			if (p_queue == (void *)0)
 				goto no_queue;
 		#endif
+
 	}
 
-	// Check for overflow
-	if ( queue_full(p_queue) )
-		goto queue_overflow;
+	// Initialized data
+	struct queue_node_s *q = p_queue->rear, // Q comes before R(ear)
+	                    *r = calloc(1, sizeof(struct queue_node_s));
+	
+	// Walk to the end from the rear
+	if (!q)
+	{
+		q = p_queue->front = p_queue->rear = r;
+	}
+	else
+	{
+		while ( q->next != 0 ) { q = q->next; }; q->next = r;
+		r->prev = q;
+		p_queue->rear = r;
+	}
 
-	// Has the queue been reset?
-	if (p_queue->front == -1)
-		p_queue->front = 0;
-
-	// Add the data to the queue
-	p_queue->contents[++p_queue->rear] = data;
+	r->content = data;
+	
 
 	// Success
 	return 1;
@@ -270,8 +328,8 @@ int queue_enqueue(queue* p_queue, void* data)
 		}
 	}
 }
-
-void* queue_dequeue ( queue* p_queue )
+ 
+int  queue_dequeue ( queue* p_queue, void **pp_value )
 {
 	
 	// Argument check
@@ -280,27 +338,35 @@ void* queue_dequeue ( queue* p_queue )
 			if (p_queue == (void *)0)
 				goto no_queue;
 		#endif
+
+		if (p_queue->front==0)
+			return 0;
 	}
 
 	// Initialized data
-	void* ret = 0;
+	void **pp_ret = 0;
+	struct queue_node_s *ret_m = 0,
+	                    *ret_n = 0;
 
-	// Check for an underflow
-	if ( queue_empty(p_queue) )
-		goto queue_underflow;
+	ret_m = ((struct queue_node_s *)(p_queue->front));
 
-	// Get the return value
-	ret = p_queue->contents[p_queue->front];
+	// Remove the front
+	if (p_queue->front != p_queue->rear)
+	{
+		p_queue->front = ((struct queue_node_s *)(p_queue->front))->next;
+		
+	}
+	else
+		p_queue->front = 0,
+		p_queue->rear  = 0;
 
-	// If that was the last element, reset the queue
-	if (p_queue->front >= p_queue->rear)
-		p_queue->front = -2, 
-		p_queue->rear  = -1;
+	if(pp_value)
+		*pp_value = ret_m->content;
 
-	p_queue->front++;
+	free(ret_n);
 
-	// Return a pointer to the element
-	return ret;
+	// Success
+	return 1;
 
 	// Error handling
 	{
@@ -326,67 +392,37 @@ void* queue_dequeue ( queue* p_queue )
 	}
 }
 
-bool queue_empty(queue* p_queue)
+bool queue_empty ( queue *p_queue )
 {
-		
+	
 	// Argument check
 	{
-		#ifndef NDEBUG
-			if (p_queue == (void *)0)
-				goto no_queue;
+		#ifndef MDEBIG
+			if ( p_queue == (void *)0 )
+				goto no_p_queue;
 		#endif
 	}
 
-	// Return true if the queue is empty, false otherwise
-	return (p_queue->front == -1) ? true : false;
-	
-	// Error handling
-	{
-
-		// Argument errors
-		{
-			no_queue:
-				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
-				#endif
-
-			// Error
-			return 0;
-		}
-	}
-}
-
-bool queue_full(queue* p_queue)
-{
-		
-	// Argument check
-	{
-		#ifndef NDEBUG
-			if (p_queue == (void *)0)
-				goto no_queue;
-		#endif
-	}
-	
-	// Return true if queue is full, false otherwise
-	return (p_queue->front == 0 && p_queue->rear == p_queue->size -1 ) ? true : false;
+	// Initialized data
+	return p_queue->front == 0;
 
 	// Error handling
 	{
 
 		// Argument errors
 		{
-			no_queue:
+			no_p_queue:
 				#ifndef NDEBUG
-					printf("[Queue] Null pointer provided for \"p_queue\" in call to function \"%s\"\n",__FUNCTION__);
+					printf("[queue] Null pointer provided for parameter \"p_queue\" in call to function \"%s\"\n", __FUNCTION__);
 				#endif
-
+			
 			// Error
 			return 0;
 		}
 	}
 }
 
-int queue_destroy(queue **pp_queue)
+int  queue_destroy ( queue **pp_queue)
 {
 
 	// Argument check
@@ -402,9 +438,6 @@ int queue_destroy(queue **pp_queue)
 
 	// No more queue for end user
 	*pp_queue = 0;
-
-	// Free the queue contents
-	free(p_queue->contents);
 
 	// Free the queue
 	free(p_queue);

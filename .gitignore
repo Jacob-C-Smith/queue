@@ -16,6 +16,8 @@ queue_example
 CMakeCache.txt
 build/
 Makefile
+.vscode/
+.gituhb/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

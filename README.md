@@ -11,7 +11,7 @@
  >
  >> 3.1 [Example output](#example-output)
  >
- > 4 [TODO: Tester](#tester)
+ > 4 [Tester](#tester)
  >
  > 5 [Definitions](#definitions)
  >
@@ -44,7 +44,7 @@
  TODO
  ```
  [Source](main.c)
-## TODO: Tester
+## Tester
  To run the tester program, execute this command after building
  ```
  $ ./queue_test
@@ -58,21 +58,21 @@
  ### Function definitions
  ```c 
 // Allocaters
-DLLEXPORT int   queue_create    ( queue **pp_queue );
+DLLEXPORT int  queue_create        ( queue **pp_queue );
 
 // Constructors
-DLLEXPORT int   queue_construct ( queue **pp_queue, size_t   size );
+DLLEXPORT int  queue_construct     ( queue **pp_queue );
+DLLEXPORT int  queue_from_contents ( queue **pp_queue, void **pp_contents, size_t size );
 
 // Accessors
-DLLEXPORT void *queue_front     ( queue  *p_queue );
-DLLEXPORT void *queue_rear      ( queue  *p_queue );
+DLLEXPORT int  queue_front         ( queue  *p_queue , void **pp_value );
+DLLEXPORT int  queue_rear          ( queue  *p_queue , void **pp_value );
+DLLEXPORT bool queue_empty         ( queue  *p_queue );
 
 // Mutators
-DLLEXPORT int   queue_enqueue   ( queue  *p_queue , void    *data );
-DLLEXPORT void *queue_dequeue   ( queue  *p_queue );
-DLLEXPORT bool  queue_empty     ( queue  *p_queue );
-DLLEXPORT bool  queue_full      ( queue  *p_queue );
+DLLEXPORT int  queue_enqueue       ( queue  *p_queue , void  *data );
+DLLEXPORT int  queue_dequeue       ( queue  *p_queue , void **pp_value );
 
 // Destructors
-DLLEXPORT int   queue_destroy   ( queue **pp_queue );
+DLLEXPORT int  queue_destroy       ( queue **pp_queue );
  ```

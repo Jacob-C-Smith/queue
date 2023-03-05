@@ -45,15 +45,31 @@ DLLEXPORT int   queue_create    ( queue **pp_queue );
 /** !
  *  Construct a queue with a specific number of entries
  *
- * @param pp_dict  return
- * @param size     number of queue entries. 
+ * @param pp_queue return
  *
  * @sa queue_create
+ * @sa queue_from_contents
  * @sa queue_destroy
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int   queue_construct ( queue **pp_queue, size_t   size );
+DLLEXPORT int   queue_construct ( queue **pp_queue );
+
+/** !
+ * TODO:
+ *  Construct a queue from a void pointer array
+ *
+ * @param pp_queue    return
+ * @param pp_contents pointer to array of void pointers to use as queue contents.
+ * @param size        number of queue entries. 
+ *
+ * @sa queue_construct
+ * @sa queue_destroy
+ *
+ * @return 1 on success, 0 on error
+ */
+DLLEXPORT int   queue_from_contents ( queue **pp_queue, void **pp_contents, size_t size );
+
 
 // Accessors
 /** !
@@ -65,7 +81,7 @@ DLLEXPORT int   queue_construct ( queue **pp_queue, size_t   size );
  *
  * @return element value on success, null pointer on error
  */
-DLLEXPORT void *queue_front     ( queue  *p_queue );
+DLLEXPORT int queue_front     ( queue  *p_queue, void **pp_value );
 
 /** !
  *  Get the element at the rear of the queue
@@ -76,7 +92,7 @@ DLLEXPORT void *queue_front     ( queue  *p_queue );
  *
  * @return element on success, null pointer on error
  */
-DLLEXPORT void *queue_rear      ( queue  *p_queue );
+DLLEXPORT int queue_rear      ( queue  *p_queue, void **pp_value );
 
 // Mutators
 /** !
@@ -100,7 +116,7 @@ DLLEXPORT int   queue_enqueue   ( queue  *p_queue , void    *data );
  *
  * @return element on success, null pointer on error
  */
-DLLEXPORT void *queue_dequeue   ( queue  *p_queue );
+DLLEXPORT int queue_dequeue   ( queue  *p_queue, void **pp_value );
 
 /** !
  *  Check if a queue is empty
@@ -113,16 +129,6 @@ DLLEXPORT void *queue_dequeue   ( queue  *p_queue );
  */
 DLLEXPORT bool  queue_empty     ( queue  *p_queue );
 
-/** !
- *  Check if a queue is full
- *
- * @param p_queue queue
- *
- * @sa queue_empty
- *
- * @return true if queue is full else false
- */
-DLLEXPORT bool  queue_full      ( queue  *p_queue );
 
 // Destructors
 /** !
