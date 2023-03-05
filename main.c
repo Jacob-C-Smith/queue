@@ -10,7 +10,7 @@ int main ( int argc, const char *argv[] )
 	void  *value   = 0;
 
 	// Construct a queue
-	queue_construct(&p_queue, 5);
+	queue_construct(&p_queue);
 	
 	// Add three elements to the queue
 	queue_enqueue(p_queue, "First!");
