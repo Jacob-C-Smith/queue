@@ -41,7 +41,14 @@
  ```
  ### Example output
  ```
- TODO
+First!
+Second!
+Third!
+
+Fourth!
+Fifth!
+Sixth!
+Detected queue underflow!
  ```
  [Source](main.c)
 ## Tester
