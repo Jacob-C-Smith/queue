@@ -18,6 +18,7 @@ build/
 Makefile
 .vscode/
 .gituhb/
+.DS_Store
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
