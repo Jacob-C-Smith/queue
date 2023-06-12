@@ -39,7 +39,7 @@ typedef struct queue_s queue;
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int   queue_create    ( queue **pp_queue );
+DLLEXPORT int queue_create ( queue **pp_queue );
 
 // Constructors
 /** !
@@ -53,7 +53,7 @@ DLLEXPORT int   queue_create    ( queue **pp_queue );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int   queue_construct ( queue **pp_queue );
+DLLEXPORT int queue_construct ( queue **pp_queue );
 
 /** !
  * TODO:
@@ -68,7 +68,7 @@ DLLEXPORT int   queue_construct ( queue **pp_queue );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int   queue_from_contents ( queue **pp_queue, void **pp_contents, size_t size );
+DLLEXPORT int queue_from_contents ( queue **pp_queue, void **pp_contents, size_t size );
 
 
 // Accessors
@@ -81,7 +81,7 @@ DLLEXPORT int   queue_from_contents ( queue **pp_queue, void **pp_contents, size
  *
  * @return element value on success, null pointer on error
  */
-DLLEXPORT int queue_front     ( queue  *p_queue, void **pp_value );
+DLLEXPORT int queue_front ( queue  *p_queue, void **pp_value );
 
 /** !
  *  Get the element at the rear of the queue
@@ -92,7 +92,7 @@ DLLEXPORT int queue_front     ( queue  *p_queue, void **pp_value );
  *
  * @return element on success, null pointer on error
  */
-DLLEXPORT int queue_rear      ( queue  *p_queue, void **pp_value );
+DLLEXPORT int queue_rear ( queue  *p_queue, void **pp_value );
 
 // Mutators
 /** !
@@ -105,7 +105,7 @@ DLLEXPORT int queue_rear      ( queue  *p_queue, void **pp_value );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int   queue_enqueue   ( queue  *p_queue , void    *data );
+DLLEXPORT int queue_enqueue ( queue  *p_queue , void    *data );
 
 /** !
  *  Remove an element from a queue
@@ -116,7 +116,7 @@ DLLEXPORT int   queue_enqueue   ( queue  *p_queue , void    *data );
  *
  * @return element on success, null pointer on error
  */
-DLLEXPORT int queue_dequeue   ( queue  *p_queue, void **pp_value );
+DLLEXPORT int queue_dequeue ( queue  *p_queue, void **pp_value );
 
 /** !
  *  Check if a queue is empty
@@ -127,7 +127,7 @@ DLLEXPORT int queue_dequeue   ( queue  *p_queue, void **pp_value );
  *
  * @return true if queue is empty else false
  */
-DLLEXPORT bool  queue_empty     ( queue  *p_queue );
+DLLEXPORT bool queue_empty ( queue  *p_queue );
 
 
 // Destructors
@@ -140,4 +140,4 @@ DLLEXPORT bool  queue_empty     ( queue  *p_queue );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int   queue_destroy   ( queue **pp_queue );
+DLLEXPORT int queue_destroy ( queue **pp_queue );

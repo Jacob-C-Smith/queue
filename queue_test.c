@@ -322,7 +322,7 @@ int test_empty_queue(int(*queue_constructor)(queue **pp_queue), char *name)
     print_test(name, "queue_front"  , test_front(queue_constructor, (void *)0, zero) );
     print_test(name, "queue_rear"   , test_rear(queue_constructor, (void *)0, zero) );
     print_test(name, "queue_enqueue", test_enqueue(queue_constructor, A_element, one) );
-    print_test(name, "queue_dequeue", test_dequeue(queue_constructor, zero, 1, Underflow) );    
+    print_test(name, "queue_dequeue", test_dequeue(queue_constructor, (void **)zero, 1, Underflow) );    
     print_test(name, "queue_empty"  , test_empty(queue_constructor, 0, True) );
 
     print_final_summary();
@@ -397,7 +397,7 @@ int test_three_element_queue   ( int (*queue_constructor)(queue **), char *name,
     for (size_t i = 0; elements[i]; i++)
     {
         char *test_name = calloc(15+1, sizeof(char));
-        sprintf(test_name, "queue_dequeue_%i", i);
+        sprintf(test_name, "queue_dequeue_%lld", i);
         print_test(name, test_name , test_dequeue(queue_constructor, elements[2-i], i+1, match) );
         free(test_name);
     }

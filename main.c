@@ -24,7 +24,7 @@ int main ( int argc, const char *argv[] )
 	printf("\n");
 
 	// Fill up the queue
-	queue_from_contents(&p_queue, pp_contents, 6);
+	queue_from_contents(&p_queue, (void **)pp_contents, 6);
 	queue_dequeue(p_queue, 0);
 	queue_dequeue(p_queue, 0);
 	queue_dequeue(p_queue, 0);

@@ -2,15 +2,15 @@
 
 struct queue_node_s
 {
-	void              *content;
-	struct queue_node *prev,
-	                  *next;
+	void                *content;
+	struct queue_node_s *prev,
+	                    *next;
 };
 
 struct queue_s
 {
-	struct queue_node *front,
-                      *rear;
+	struct queue_node_s *front,
+                        *rear;
 };
 
 int  queue_create ( queue **pp_queue)
