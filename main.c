@@ -19,7 +19,18 @@ int main ( int argc, const char *argv[] )
 	queue_enqueue(p_queue, "Third!");
 
 	// Empty the queue and print each element
-	while ( queue_empty(p_queue) == false ) { void *v = 0; queue_dequeue(p_queue,&v); printf("%s\n", (char *) v); }
+	while ( queue_empty(p_queue) == false )
+	{
+
+		// Initialized data
+		void *v = 0;
+
+		// Dequeue an item
+		queue_dequeue(p_queue,&v);
+
+		// Print the element
+		printf("%s\n", (char *) v);
+	}
 	
 	printf("\n");
 
@@ -30,7 +41,18 @@ int main ( int argc, const char *argv[] )
 	queue_dequeue(p_queue, 0);
 
 	// Empty the full queue
-	while ( queue_empty(p_queue) == false ) { void *v = 0; queue_dequeue(p_queue,&v); printf("%s\n", (char *) v); }
+	while ( queue_empty(p_queue) == false )
+	{
+
+		// Initialized data
+		void *v = 0;
+
+		// Dequeue an item
+		queue_dequeue(p_queue,&v);
+
+		// Print the element
+		printf("%s\n", (char *) v);
+	}
 
 	// Cause an underflow
 	if ( queue_dequeue(p_queue, &value) == 0 )

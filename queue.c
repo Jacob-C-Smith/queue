@@ -19,7 +19,7 @@ int  queue_create ( queue **pp_queue)
 	// Argument check
 	{
 		#ifndef NDEBUG
-			if(pp_queue == (void *)0)
+			if ( pp_queue == (void *) 0 )
 				goto no_queue;
 		#endif
 	}
@@ -74,8 +74,7 @@ int  queue_construct ( queue **pp_queue )
 	// Argument check
 	{
 		#ifndef NDEBUG
-			if(pp_queue == (void *)0)
-				goto no_queue;
+			if ( pp_queue == (void *) 0 ) goto no_queue;
 		#endif
 	}
 
@@ -311,7 +310,10 @@ int  queue_enqueue ( queue* p_queue, void* data)
 	}
 	else
 	{
-		while ( q->next != 0 ) { q = q->next; }; q->next = r;
+		while ( q->next != 0 )
+			q = q->next;
+		
+		q->next = r;
 		r->prev = q;
 		p_queue->rear = r;
 	}
@@ -377,7 +379,7 @@ int  queue_dequeue ( queue* p_queue, void **pp_value )
 		p_queue->front = 0,
 		p_queue->rear  = 0;
 
-	if(pp_value)
+	if ( pp_value )
 		*pp_value = ret_m->content;
 
 	free(ret_n);
