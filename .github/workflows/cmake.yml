@@ -1,4 +1,4 @@
-name: CMake
+name: queue
 
 on:
   push:
