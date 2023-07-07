@@ -177,14 +177,14 @@ int queue_front ( queue* p_queue, void **pp_value )
 	// Argument check
 	#ifndef NDEBUG
 		if ( p_queue  == (void *) 0 ) goto no_queue;
-		if ( pp_value == (void *) 0 ) goto no_ret;
-		if ( queue_empty(p_queue)   ) goto no_queue_contents;
 	#endif
 
-	// Return a pointer to the caller
-	*pp_value = ((struct queue_node_s *)(p_queue->front))->content;
+	// State check
+	if ( queue_empty(p_queue) ) goto no_queue_contents;
 
-	no_ret:
+	// Return a pointer to the caller
+	if ( pp_value )
+		*pp_value = ((struct queue_node_s *)(p_queue->front))->content;
 	
 	// Exit
 	return 1;
@@ -219,12 +219,14 @@ int queue_rear ( queue* p_queue, void **pp_value )
 	// Argument check
 	#ifndef NDEBUG
 		if ( p_queue  == (void *) 0 ) goto no_queue;
-		if ( pp_value == (void *) 0 ) goto no_ret;
-		if ( queue_empty(p_queue)   ) goto no_queue_contents;
 	#endif
+	
+	// State check
+	if ( queue_empty(p_queue)   ) goto no_queue_contents;
 
 	// Return a pointer to the rear element
-	*pp_value = ((struct queue_node_s *)(p_queue->rear))->content;
+	if ( pp_value )
+		*pp_value = ((struct queue_node_s *)(p_queue->rear))->content;
 
 	no_ret:
 	
