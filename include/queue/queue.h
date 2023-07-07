@@ -8,6 +8,9 @@
 // Include guard
 #pragma once
 
+// sync submodule
+#include <sync/sync.h>
+
 // Standard library
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +23,12 @@
 #define DLLEXPORT
 #endif
 
-// Forward declared structs
+// Memory management macro
+#ifndef QUEUE_REALLOC
+#define QUEUE_REALLOC(p, sz) realloc(p,sz)
+#endif
+
+// Forward declarations
 struct queue_s;
 
 // Type definitions
