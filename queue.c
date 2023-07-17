@@ -5,6 +5,7 @@ struct queue_node_s
 	void *content;
 	struct queue_node_s *prev,
 	                    *next;
+	mutex _mutex;
 };
 
 struct queue_s
@@ -73,16 +74,16 @@ int queue_construct ( queue **pp_queue )
 	#endif
 
 	// Initialized data
-	queue *i_queue = 0;
+	queue *p_queue = 0;
 
 	// Allocate for a queue
 	if ( queue_create(pp_queue) == 0 ) goto failed_to_create_queue;
 
 	// Get a pointer to the allocated memory
-	i_queue = *pp_queue;
+	p_queue = *pp_queue;
 
 	// Create a mutex
-	mutex_create(&i_queue->_lock);
+    if ( mutex_create(&p_queue->_lock) == 0 ) goto failed_to_create_mutex;
 
 	// Success
 	return 1;
@@ -110,6 +111,14 @@ int queue_construct ( queue **pp_queue )
 
 				// Error
 				return 0;
+			
+			failed_to_create_mutex:
+                #ifndef NDEBUG
+                    printf("[queue] Failed to create mutex in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
 		}
 	}
 }
@@ -179,6 +188,9 @@ int queue_front ( queue* p_queue, void **pp_value )
 		if ( p_queue  == (void *) 0 ) goto no_queue;
 	#endif
 
+	// Lock
+	mutex_lock(p_queue->_lock);
+
 	// State check
 	if ( queue_empty(p_queue) ) goto no_queue_contents;
 
@@ -186,6 +198,9 @@ int queue_front ( queue* p_queue, void **pp_value )
 	if ( pp_value )
 		*pp_value = ((struct queue_node_s *)(p_queue->front))->content;
 	
+	// Unlock
+	mutex_unlock(p_queue->_lock);
+
 	// Exit
 	return 1;
 
@@ -221,15 +236,19 @@ int queue_rear ( queue* p_queue, void **pp_value )
 		if ( p_queue  == (void *) 0 ) goto no_queue;
 	#endif
 	
+	// Lock
+	mutex_lock(p_queue->_lock);
+
 	// State check
-	if ( queue_empty(p_queue)   ) goto no_queue_contents;
+	if ( queue_empty(p_queue) ) goto no_queue_contents;
 
 	// Return a pointer to the rear element
 	if ( pp_value )
 		*pp_value = ((struct queue_node_s *)(p_queue->rear))->content;
-
-	no_ret:
 	
+	// Unlock
+	mutex_unlock(p_queue->_lock);
+
 	// Exit
 	return 1;
 
@@ -251,6 +270,9 @@ int queue_rear ( queue* p_queue, void **pp_value )
 					printf("[queue] Queue has no contents in call to function \"%s\"\n", __FUNCTION__);
 				#endif
 			
+				// Unlock
+				mutex_unlock(p_queue->_lock);
+
 				// Error
 				return 0;
 		}
@@ -264,6 +286,9 @@ int queue_enqueue ( queue* p_queue, void* data )
 	#ifndef NDEBUG
 		if ( p_queue == (void *) 0 ) goto no_queue;
 	#endif
+
+	// Lock
+	mutex_lock(p_queue->_lock);
 
 	// Initialized data
 	struct queue_node_s *q = p_queue->rear, // Q comes before R(ear)
@@ -293,6 +318,9 @@ int queue_enqueue ( queue* p_queue, void* data )
 
 	r->content = data;
 	
+	// Unlock
+	mutex_unlock(p_queue->_lock);
+
 	// Success
 	return 1;
 		
@@ -330,9 +358,12 @@ int queue_dequeue ( queue* p_queue, void **pp_value )
 	#ifndef NDEBUG
 		if ( p_queue == (void *) 0 ) goto no_queue;
 	#endif
-
+	
+	// Lock
+	mutex_lock(p_queue->_lock);
+	
 	// State check
-	if ( p_queue->front == 0 ) return 0;
+	if ( p_queue->front == 0 ) goto queue_empty;
 
 	// Initialized data
 	void **pp_ret = 0;
@@ -356,7 +387,10 @@ int queue_dequeue ( queue* p_queue, void **pp_value )
 
 	// Free the memory
 	if ( QUEUE_REALLOC(ret_m, 0) ) goto failed_to_free;
-
+		
+	// Unlock
+	mutex_unlock(p_queue->_lock);
+	
 	// Success
 	return 1;
 
@@ -381,9 +415,25 @@ int queue_dequeue ( queue* p_queue, void **pp_value )
                     printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
+				// Unlock
+				mutex_unlock(p_queue->_lock);
+
                 // Error
                 return 0;
         }
+
+		// Queue errors
+		{
+			queue_empty:
+
+				// No output...
+				
+				// Unlock
+				mutex_unlock(p_queue->_lock);
+
+				// Error
+				return 0;
+		}
 	}
 }
 
@@ -395,8 +445,14 @@ bool queue_empty ( queue *p_queue )
 		if ( p_queue == (void *)0 ) goto no_queue;
 	#endif
 
+	// Lock
+	mutex_lock(p_queue->_lock);
+
 	// Initialized data
 	return ( p_queue->front == 0 );
+	
+	// Unlock
+	mutex_unlock(p_queue->_lock);
 
 	// Error handling
 	{
@@ -424,9 +480,15 @@ int queue_destroy ( queue **pp_queue )
 
 	// Initialized data
 	queue *p_queue = *pp_queue;
+	
+	// Lock
+	mutex_lock(p_queue->_lock);
 
 	// No more queue for end user
 	*pp_queue = 0;
+
+	// Unlock
+	mutex_unlock(p_queue->_lock);
 
 	// Empty the queue
 	while ( queue_empty(p_queue) == false ) { queue_dequeue(p_queue, 0); };	
