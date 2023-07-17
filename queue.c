@@ -355,7 +355,7 @@ int queue_dequeue ( queue* p_queue, void **pp_value )
 		*pp_value = ret_m->content;
 
 	// Free the memory
-	if ( QUEUE_REALLOC(ret_n, 0) == 0 ) goto failed_to_free;
+	if ( QUEUE_REALLOC(ret_m, 0) ) goto failed_to_free;
 
 	// Success
 	return 1;
