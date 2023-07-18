@@ -449,10 +449,15 @@ bool queue_empty ( queue *p_queue )
 	mutex_lock(p_queue->_lock);
 
 	// Initialized data
-	return ( p_queue->front == 0 );
-	
+	bool ret = ( p_queue->front == 0 );
+
 	// Unlock
 	mutex_unlock(p_queue->_lock);
+	
+	// Success
+	return ret;
+	
+	
 
 	// Error handling
 	{
