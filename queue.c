@@ -65,7 +65,7 @@ int queue_create ( queue **pp_queue )
 	}
 }
  
-int queue_construct ( queue **pp_queue )
+int queue_construct ( const queue **pp_queue )
 {
 
 	// Argument check
@@ -123,7 +123,7 @@ int queue_construct ( queue **pp_queue )
 	}
 }
  
-int queue_from_contents ( queue **pp_queue, void **pp_contents, size_t size )
+int queue_from_contents ( const queue **pp_queue, const void **pp_contents, size_t size )
 {
 
 	// Argument check
@@ -180,7 +180,7 @@ int queue_from_contents ( queue **pp_queue, void **pp_contents, size_t size )
 	}
 }
 
-int queue_front ( queue* p_queue, void **pp_value )
+int queue_front ( const queue* p_queue, const void **pp_value )
 {
 
 	// Argument check
@@ -228,7 +228,7 @@ int queue_front ( queue* p_queue, void **pp_value )
 	}
 }
  
-int queue_rear ( queue* p_queue, void **pp_value )
+int queue_rear ( const queue* p_queue, const void **pp_value )
 {
 
 	// Argument check
@@ -279,7 +279,7 @@ int queue_rear ( queue* p_queue, void **pp_value )
 	}
 }
  
-int queue_enqueue ( queue* p_queue, void* data )
+int queue_enqueue ( queue* p_queue, const void* data )
 {
 
 	// Argument check
@@ -351,7 +351,7 @@ int queue_enqueue ( queue* p_queue, void* data )
 	}
 }
  
-int queue_dequeue ( queue* p_queue, void **pp_value )
+int queue_dequeue ( queue* p_queue, const void **pp_value )
 {
 	
 	// Argument check
@@ -437,7 +437,7 @@ int queue_dequeue ( queue* p_queue, void **pp_value )
 	}
 }
 
-bool queue_empty ( queue *p_queue )
+bool queue_empty ( const queue *p_queue )
 {
 	
 	// Argument check
@@ -457,8 +457,6 @@ bool queue_empty ( queue *p_queue )
 	// Success
 	return ret;
 	
-	
-
 	// Error handling
 	{
 
@@ -475,7 +473,7 @@ bool queue_empty ( queue *p_queue )
 	}
 }
 
-int queue_destroy ( queue **pp_queue )
+int queue_destroy ( const queue **pp_queue )
 {
 
 	// Argument check
