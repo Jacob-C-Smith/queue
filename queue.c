@@ -123,7 +123,7 @@ int queue_construct ( queue **const pp_queue )
 	}
 }
  
-int queue_from_contents ( queue **const pp_queue, const void **const pp_contents, size_t size )
+int queue_from_contents ( queue **const pp_queue, void* const* const pp_contents, size_t size )
 {
 
 	// Argument check
@@ -180,12 +180,12 @@ int queue_from_contents ( queue **const pp_queue, const void **const pp_contents
 	}
 }
 
-int queue_front ( const queue *const p_queue, const void **const pp_value )
+int queue_front ( const queue *const p_queue, const void ** const pp_value )
 {
 
 	// Argument check
 	#ifndef NDEBUG
-		if ( p_queue  == (void *) 0 ) goto no_queue;
+		if ( p_queue == (void *) 0 ) goto no_queue;
 	#endif
 
 	// Lock
@@ -279,7 +279,7 @@ int queue_rear ( const queue *const p_queue, const void **const pp_value )
 	}
 }
  
-int queue_enqueue ( queue *const p_queue, void *const data )
+int queue_enqueue ( queue *const p_queue,  void *const data )
 {
 
 	// Argument check
