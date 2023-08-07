@@ -15,7 +15,7 @@ struct queue_s
 	mutex _lock;
 };
 
-int queue_create ( queue **pp_queue )
+int queue_create ( const queue **pp_queue )
 {
 
 	// Argument check

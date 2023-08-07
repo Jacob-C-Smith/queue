@@ -88,7 +88,7 @@ DLLEXPORT int queue_from_contents ( const queue **pp_queue, const void **pp_cont
  *
  * @return element value on success, null pointer on error
  */
-DLLEXPORT int queue_front ( const queue  *p_queue, const void **pp_value );
+DLLEXPORT int queue_front ( const queue *p_queue, const void **pp_value );
 
 /** !
  *  Get the element at the rear of the queue
@@ -99,7 +99,7 @@ DLLEXPORT int queue_front ( const queue  *p_queue, const void **pp_value );
  *
  * @return element on success, null pointer on error
  */
-DLLEXPORT int queue_rear ( const queue  *p_queue, const void **pp_value );
+DLLEXPORT int queue_rear ( const queue *p_queue, const void **pp_value );
 
 // Mutators
 /** !
@@ -112,7 +112,7 @@ DLLEXPORT int queue_rear ( const queue  *p_queue, const void **pp_value );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int queue_enqueue ( queue *p_queue , void *data );
+DLLEXPORT int queue_enqueue ( queue *p_queue , const void *data );
 
 /** !
  *  Remove an element from a queue
@@ -123,7 +123,7 @@ DLLEXPORT int queue_enqueue ( queue *p_queue , void *data );
  *
  * @return element on success, null pointer on error
  */
-DLLEXPORT int queue_dequeue ( queue *p_queue, void **pp_value );
+DLLEXPORT int queue_dequeue ( queue *p_queue, const void **pp_value );
 
 /** !
  *  Check if a queue is empty
