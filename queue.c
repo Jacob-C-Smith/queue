@@ -5,7 +5,6 @@ struct queue_node_s
 	void *content;
 	struct queue_node_s *prev,
 	                    *next;
-	mutex _mutex;
 };
 
 struct queue_s
@@ -19,9 +18,7 @@ int queue_create ( queue **const pp_queue )
 {
 
 	// Argument check
-	#ifndef NDEBUG
-		if ( pp_queue == (void *) 0 ) goto no_queue;
-	#endif
+	if ( pp_queue == (void *) 0 ) goto no_queue;
 
 	// Initialized data
 	queue *ret = QUEUE_REALLOC(0, sizeof(queue));
@@ -69,9 +66,7 @@ int queue_construct ( queue **const pp_queue )
 {
 
 	// Argument check
-	#ifndef NDEBUG
-		if ( pp_queue == (void *) 0 ) goto no_queue;
-	#endif
+	if ( pp_queue == (void *) 0 ) goto no_queue;
 
 	// Initialized data
 	queue *p_queue = 0;
@@ -127,11 +122,9 @@ int queue_from_contents ( queue **const pp_queue, void* const* const pp_contents
 {
 
 	// Argument check
-	#ifndef NDEBUG
-		if ( pp_queue    == (void *) 0 ) goto no_queue;
-		if ( pp_contents == (void *) 0 ) goto no_queue_contents;
-		if ( size        ==          0 ) goto no_queue_contents;
-	#endif
+	if ( pp_queue    == (void *) 0 ) goto no_queue;
+	if ( pp_contents == (void *) 0 ) goto no_queue_contents;
+	if ( size        ==          0 ) goto no_queue_contents;
 
 	// Construct a queue
 	if ( queue_construct(pp_queue) == 0 ) goto failed_to_construct_queue;
@@ -184,9 +177,7 @@ int queue_front ( const queue *const p_queue, const void ** const pp_value )
 {
 
 	// Argument check
-	#ifndef NDEBUG
-		if ( p_queue == (void *) 0 ) goto no_queue;
-	#endif
+	if ( p_queue == (void *) 0 ) goto no_queue;
 
 	// Lock
 	mutex_lock(p_queue->_lock);
@@ -232,9 +223,7 @@ int queue_rear ( const queue *const p_queue, const void **const pp_value )
 {
 
 	// Argument check
-	#ifndef NDEBUG
-		if ( p_queue  == (void *) 0 ) goto no_queue;
-	#endif
+	if ( p_queue  == (void *) 0 ) goto no_queue;
 	
 	// Lock
 	mutex_lock(p_queue->_lock);
@@ -283,9 +272,7 @@ int queue_enqueue ( queue *const p_queue,  void *const data )
 {
 
 	// Argument check
-	#ifndef NDEBUG
-		if ( p_queue == (void *) 0 ) goto no_queue;
-	#endif
+	if ( p_queue == (void *) 0 ) goto no_queue;
 
 	// Lock
 	mutex_lock(p_queue->_lock);
@@ -355,9 +342,7 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 {
 	
 	// Argument check
-	#ifndef NDEBUG
-		if ( p_queue == (void *) 0 ) goto no_queue;
-	#endif
+	if ( p_queue == (void *) 0 ) goto no_queue;
 	
 	// Lock
 	mutex_lock(p_queue->_lock);
@@ -366,9 +351,7 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 	if ( p_queue->front == 0 ) goto queue_empty;
 
 	// Initialized data
-	void **pp_ret = 0;
-	struct queue_node_s *ret_m = 0,
-	                    *ret_n = 0;
+	struct queue_node_s *ret_m = 0;
 
 	ret_m = ((struct queue_node_s *)(p_queue->front));
 
@@ -376,8 +359,10 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 	if (p_queue->front != p_queue->rear)
 		p_queue->front = ((struct queue_node_s *)(p_queue->front))->next;
 	else
-		p_queue->front = 0,
+	{
+		p_queue->front = 0;
 		p_queue->rear  = 0;
+	}
 
 	// If the caller specified a return...
 	if ( pp_value )
@@ -441,9 +426,7 @@ bool queue_empty ( const queue *const p_queue )
 {
 	
 	// Argument check
-	#ifndef MDEBIG
-		if ( p_queue == (void *)0 ) goto no_queue;
-	#endif
+	if ( p_queue == (void *)0 ) goto no_queue;
 
 	// Lock
 	mutex_lock(p_queue->_lock);
@@ -477,9 +460,7 @@ int queue_destroy ( queue **const pp_queue )
 {
 
 	// Argument check
-	#ifndef NDEBUG
-		if ( pp_queue == (void *) 0 ) goto no_queue;
-	#endif
+	if ( pp_queue == (void *) 0 ) goto no_queue;
 
 	// Initialized data
 	queue *p_queue = *pp_queue;
@@ -494,7 +475,10 @@ int queue_destroy ( queue **const pp_queue )
 	mutex_unlock(p_queue->_lock);
 
 	// Empty the queue
-	while ( queue_empty(p_queue) == false ) { queue_dequeue(p_queue, 0); };	
+	while ( queue_empty(p_queue) == false )
+	{
+		queue_dequeue(p_queue, 0);
+	}	
 
 	// Free the memory
 	if ( QUEUE_REALLOC(p_queue, 0) ) goto failed_to_free;

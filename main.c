@@ -5,6 +5,10 @@
 int main ( int argc, const char *argv[] )
 {
 
+	// Supress compiler warnings
+	(void) argc;
+	(void) argv;
+
 	// Initialized data
 	queue  *p_queue       = 0;
 	void   *value         = 0;
@@ -26,7 +30,7 @@ int main ( int argc, const char *argv[] )
 		void *v = 0;
 
 		// Dequeue an item
-		queue_dequeue(p_queue,&v);
+		queue_dequeue(p_queue, &v);
 
 		// Print the element
 		printf("%s\n", (char *) v);
