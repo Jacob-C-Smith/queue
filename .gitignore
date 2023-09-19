@@ -7,6 +7,7 @@
 *.rsuser
 *.suo
 *.user
+*.so
 *.userosscache
 *.sln.docstates
 CMakeFiles/
