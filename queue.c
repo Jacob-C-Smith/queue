@@ -371,7 +371,7 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 		*pp_value = ret_m->content;
 
 	// Free the memory
-	if ( QUEUE_REALLOC(ret_m, 0) ) goto failed_to_free;
+	(void)QUEUE_REALLOC(ret_m, 0);
 		
 	// Unlock
 	mutex_unlock(p_queue->_lock);
@@ -392,20 +392,6 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 				// Error
 				return 0;
 		}
-
-		// Standard library errors
-        {
-            failed_to_free:
-                #ifndef NDEBUG
-                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-
-				// Unlock
-				mutex_unlock(p_queue->_lock);
-
-                // Error
-                return 0;
-        }
 
 		// Queue errors
 		{
@@ -481,7 +467,7 @@ int queue_destroy ( queue **const pp_queue )
 	}	
 
 	// Free the memory
-	if ( QUEUE_REALLOC(p_queue, 0) ) goto failed_to_free;
+	(void)QUEUE_REALLOC(p_queue, 0);
 		
 	// Success
 	return 1;
@@ -499,16 +485,5 @@ int queue_destroy ( queue **const pp_queue )
 				// Error
 				return 0;
 		}
-
-		// Standard library errors
-        {
-            failed_to_free:
-                #ifndef NDEBUG
-                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-
-                // Error
-                return 0;
-        }
 	}
 }

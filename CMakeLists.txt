@@ -42,6 +42,20 @@ if ( NOT "${HAS_SYNC}")
     set(HAS_SYNC true PARENT_SCOPE)
 endif()
 
+# Find the log module
+if ( NOT "${HAS_LOG}")
+
+    # Log
+    message("[queue] Adding log project")
+
+    # Add the log directory
+    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/log ${CMAKE_SOURCE_DIR}/build/log)
+
+    # Let any parent project know that this project has log
+    set(HAS_LOG true PARENT_SCOPE)
+endif()
+
+
 # Add the queue project
 if ( NOT "${HAS_QUEUE}")
 
@@ -60,9 +74,9 @@ target_link_libraries(queue_example sync)
 
 # Add source to the tester program.
 add_executable (queue_test "queue.c" "queue_test.c")
-add_dependencies(queue_test sync)
+add_dependencies(queue_test sync log)
 target_include_directories(queue_test PUBLIC include include/queue ${CMAKE_SOURCE_DIR}/extern/sync/include/)
-target_link_libraries(queue_test sync)
+target_link_libraries(queue_test sync log)
 
 # Add source to this project's library
 add_library    (queue SHARED "queue.c")

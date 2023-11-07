@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include <log/log.h>
+
 #include <queue/queue.h>
 
 // Possible elements
@@ -92,10 +94,14 @@ int main ( int argc, const char* argv[] )
 
     // Initialize the timer library
     timer_init();
+    log_init(0, true);
 
     // Formatting
-    printf("|==============|\n| QUEUE TESTER |\n|==============|\n\n");
-
+    printf(
+        "╭──────────────╮\n"\
+        "│ queue tester │\n"\
+        "╰──────────────╯\n\n"
+    );
     // Start
     t0 = timer_high_precision();
 
@@ -106,9 +112,9 @@ int main ( int argc, const char* argv[] )
     t1 = timer_high_precision();
 
     // Report the time it took to run the tests
-    printf("queue took ");
+    log_info("queue took ");
     print_time_pretty ( (double)(t1-t0)/(double)timer_seconds_divisor() );
-    printf(" to test\n");
+    log_info(" to test\n");
 
     // Exit
     return ( total_passes == total_tests ) ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -146,27 +152,27 @@ int print_time_pretty ( double seconds )
 
     // Print days
     if ( days ) 
-        printf("%d D, ", days);
+        log_info("%d D, ", days);
     
     // Print hours
     if ( hours )
-        printf("%d h, ", hours);
+        log_info("%d h, ", hours);
 
     // Print minutes
     if ( minutes )
-        printf("%d m, ", minutes);
+        log_info("%d m, ", minutes);
 
     // Print seconds
     if ( __seconds )
-        printf("%d s, ", __seconds);
+        log_info("%d s, ", __seconds);
     
     // Print milliseconds
     if ( milliseconds )
-        printf("%d ms, ", milliseconds);
+        log_info("%d ms, ", milliseconds);
     
     // Print microseconds
     if ( microseconds )
-        printf("%d us", microseconds);
+        log_info("%d us", microseconds);
     
     // Success
     return 1;
@@ -396,7 +402,7 @@ int test_empty_queue(int(*queue_constructor)(queue **pp_queue), char *name)
     // Call the queue constructor
     queue_constructor(&p_queue);
 
-    printf("Scenario: %s\n", name);
+    log_info("Scenario: %s\n", name);
 
     print_test(name, "queue_front"  , test_front(queue_constructor, (void *)0, zero) );
     print_test(name, "queue_rear"   , test_rear(queue_constructor, (void *)0, zero) );
@@ -416,7 +422,7 @@ int test_one_element_queue   ( int (*queue_constructor)(queue **), char *name, v
     queue *p_queue = 0;
     
 
-    printf("Scenario: %s\n", name);
+    log_info("Scenario: %s\n", name);
 
     print_test(name, "queue_front"    , test_front(queue_constructor, elements[0], match) );
     print_test(name, "queue_rear"     , test_rear(queue_constructor, elements[0], match) );
@@ -434,13 +440,7 @@ int test_one_element_queue   ( int (*queue_constructor)(queue **), char *name, v
 int test_two_element_queue   ( int (*queue_constructor)(queue **), char *name, void **elements )
 {
 
-    // Initialized_data
-    queue *p_queue = 0;
-    
-    // Call the queue constructor
-    queue_constructor(&p_queue);
-
-    printf("Scenario: %s\n", name);
+    log_info("Scenario: %s\n", name);
 
     print_test(name, "queue_front"  , test_front(queue_constructor, elements[1], match) );
     print_test(name, "queue_rear"   , test_rear(queue_constructor, elements[0], match) );
@@ -467,7 +467,7 @@ int test_three_element_queue   ( int (*queue_constructor)(queue **), char *name,
     // Call the queue constructor
     queue_constructor(&p_queue);
 
-    printf("Scenario: %s\n", name);
+    log_info("Scenario: %s\n", name);
 
     print_test(name, "queue_front"  , test_front(queue_constructor, elements[2], match) );
     print_test(name, "queue_rear"   , test_rear(queue_constructor, elements[0], match) );
@@ -496,7 +496,11 @@ int print_test ( const char *scenario_name, const char *test_name, bool passed )
 {
 
     // Initialized data
-    printf("%s_test_%-17s %s\n",scenario_name, test_name, (passed) ? "PASS" : "FAIL");
+    if ( passed )
+        log_pass("[%s] %s %s\n", "PASS", scenario_name, test_name);
+    else
+        log_fail("[%s] %s %s\n", "FAIL", scenario_name, test_name);
+
 
     // Increment the counters
     {
@@ -525,8 +529,8 @@ int print_final_summary ()
     total_fails  += ephemeral_fails;
 
     // Print
-    printf("\nTests: %d, Passed: %d, Failed: %d (%%%.3f)\n",  ephemeral_tests, ephemeral_passes, ephemeral_fails, ((float)ephemeral_passes/(float)ephemeral_tests*100.f));
-    printf("Total: %d, Passed: %d, Failed: %d (%%%.3f)\n\n",  total_tests, total_passes, total_fails, ((float)total_passes/(float)total_tests*100.f));
+    log_info("\nTests: %d, Passed: %d, Failed: %d (%%%.3f)\n",  ephemeral_tests, ephemeral_passes, ephemeral_fails, ((float)ephemeral_passes/(float)ephemeral_tests*100.f));
+    log_info("Total: %d, Passed: %d, Failed: %d (%%%.3f)\n\n",  total_tests, total_passes, total_fails, ((float)total_passes/(float)total_tests*100.f));
     
     ephemeral_tests  = 0;
     ephemeral_passes = 0;
