@@ -1,5 +1,5 @@
-# Need CMake 3.0
-cmake_minimum_required (VERSION 3.0)
+# Need CMake 3.28.0
+cmake_minimum_required (VERSION 3.28.0)
 
 # This is the name of the repository
 project ("queue")
@@ -32,27 +32,26 @@ endif()
 # Find the sync module
 if ( NOT "${HAS_SYNC}")
 
-    # Log
-    message("[queue] Adding sync project")
-
     # Add the sync directory
     add_subdirectory(${CMAKE_SOURCE_DIR}/extern/sync ${CMAKE_SOURCE_DIR}/build/sync)
 
     # Let any parent project know that this project has sync
-    set(HAS_SYNC true PARENT_SCOPE)
+    if(NOT PROJECT_IS_TOP_LEVEL)
+        set(HAS_SYNC true PARENT_SCOPE)
+        set(SYNC_INCLUDE_DIR ${SYNC_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
 endif()
-
 # Find the log module
 if ( NOT "${HAS_LOG}")
-
-    # Log
-    message("[queue] Adding log project")
 
     # Add the log directory
     add_subdirectory(${CMAKE_SOURCE_DIR}/extern/log ${CMAKE_SOURCE_DIR}/build/log)
 
     # Let any parent project know that this project has log
-    set(HAS_LOG true PARENT_SCOPE)
+    if(NOT PROJECT_IS_TOP_LEVEL)
+        set(HAS_LOG true PARENT_SCOPE)
+        set(LOG_INCLUDE_DIR ${LOG_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
 endif()
 
 
@@ -62,24 +61,29 @@ if ( NOT "${HAS_QUEUE}")
     # Log
     message("[queue] Adding queue project")
 
+    set (QUEUE_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
+
     # Let any parent project know that it has the queue project
-    set(HAS_QUEUE true PARENT_SCOPE)
+    if(NOT PROJECT_IS_TOP_LEVEL)
+        set(HAS_QUEUE true PARENT_SCOPE)
+        set(QUEUE_INCLUDE_DIR ${QUEUE_INCLUDE_DIR} PARENT_SCOPE)
+    endif()
 endif()
 
 # Add source to the example program.
-add_executable (queue_example "queue.c" "main.c")
-add_dependencies(queue_example sync)
-target_include_directories(queue_example PUBLIC include include/queue ${CMAKE_SOURCE_DIR}/extern/sync/include/)
-target_link_libraries(queue_example sync)
+add_executable (queue_example "main.c")
+add_dependencies(queue_example queue)
+target_include_directories(queue_example PUBLIC ${QUEUE_INCLUDE_DIR})
+target_link_libraries(queue_example queue)
 
 # Add source to the tester program.
-add_executable (queue_test "queue.c" "queue_test.c")
-add_dependencies(queue_test sync log)
-target_include_directories(queue_test PUBLIC include include/queue ${CMAKE_SOURCE_DIR}/extern/sync/include/)
-target_link_libraries(queue_test sync log)
+add_executable (queue_test "queue_test.c")
+add_dependencies(queue_test queue sync log)
+target_include_directories(queue_test PUBLIC ${QUEUE_INCLUDE_DIR} ${LOG_INCLUDE_DIR} ${SYNC_INCLUDE_DIR})
+target_link_libraries(queue_test queue sync log)
 
 # Add source to this project's library
-add_library    (queue SHARED "queue.c")
+add_library (queue SHARED "queue.c")
 add_dependencies(queue sync)
-target_include_directories(queue PUBLIC include include/queue ${CMAKE_SOURCE_DIR}/extern/sync/include/)
+target_include_directories(queue PUBLIC ${QUEUE_INCLUDE_DIR} ${SYNC_INCLUDE_DIR})
 target_link_libraries(queue sync)
