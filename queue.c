@@ -183,7 +183,7 @@ int queue_front ( const queue *const p_queue, const void ** const pp_value )
 	mutex_lock(&p_queue->_lock);
 
 	// State check
-	if ( queue_empty(p_queue) ) goto no_queue_contents;
+	if ( p_queue->front == 0 ) goto no_queue_contents;
 
 	// Return a pointer to the caller
 	if ( pp_value )
@@ -212,9 +212,12 @@ int queue_front ( const queue *const p_queue, const void ** const pp_value )
 				#ifndef NDEBUG
 					printf("[queue] Queue has no contents in call to function \"%s\"\n", __FUNCTION__);
 				#endif
-			
+
+				// Unlock
+				mutex_unlock(&p_queue->_lock);
+
 				// Error
-				return 0;
+				return 0;		
 		}
 	}
 }
@@ -229,7 +232,7 @@ int queue_rear ( const queue *const p_queue, const void **const pp_value )
 	mutex_lock(&p_queue->_lock);
 
 	// State check
-	if ( queue_empty(p_queue) ) goto no_queue_contents;
+	if ( p_queue->front == 0 ) goto no_queue_contents;
 
 	// Return a pointer to the rear element
 	if ( pp_value )
@@ -461,10 +464,10 @@ int queue_destroy ( queue **const pp_queue )
 	mutex_unlock(&p_queue->_lock);
 
 	// Empty the queue
-	while ( queue_empty(p_queue) == false )
+	while ( p_queue->front != 0 )
 	{
 		queue_dequeue(p_queue, 0);
-	}	
+	}
 
 	// Free the memory
 	(void)QUEUE_REALLOC(p_queue, 0);
