@@ -180,7 +180,7 @@ int queue_front ( const queue *const p_queue, const void ** const pp_value )
 	if ( p_queue == (void *) 0 ) goto no_queue;
 
 	// Lock
-	mutex_lock(p_queue->_lock);
+	mutex_lock(&p_queue->_lock);
 
 	// State check
 	if ( queue_empty(p_queue) ) goto no_queue_contents;
@@ -190,7 +190,7 @@ int queue_front ( const queue *const p_queue, const void ** const pp_value )
 		*pp_value = ((struct queue_node_s *)(p_queue->front))->content;
 	
 	// Unlock
-	mutex_unlock(p_queue->_lock);
+	mutex_unlock(&p_queue->_lock);
 
 	// Exit
 	return 1;
@@ -226,7 +226,7 @@ int queue_rear ( const queue *const p_queue, const void **const pp_value )
 	if ( p_queue  == (void *) 0 ) goto no_queue;
 	
 	// Lock
-	mutex_lock(p_queue->_lock);
+	mutex_lock(&p_queue->_lock);
 
 	// State check
 	if ( queue_empty(p_queue) ) goto no_queue_contents;
@@ -236,7 +236,7 @@ int queue_rear ( const queue *const p_queue, const void **const pp_value )
 		*pp_value = ((struct queue_node_s *)(p_queue->rear))->content;
 	
 	// Unlock
-	mutex_unlock(p_queue->_lock);
+	mutex_unlock(&p_queue->_lock);
 
 	// Exit
 	return 1;
@@ -260,7 +260,7 @@ int queue_rear ( const queue *const p_queue, const void **const pp_value )
 				#endif
 			
 				// Unlock
-				mutex_unlock(p_queue->_lock);
+				mutex_unlock(&p_queue->_lock);
 
 				// Error
 				return 0;
@@ -275,7 +275,7 @@ int queue_enqueue ( queue *const p_queue,  void *const data )
 	if ( p_queue == (void *) 0 ) goto no_queue;
 
 	// Lock
-	mutex_lock(p_queue->_lock);
+	mutex_lock(&p_queue->_lock);
 
 	// Initialized data
 	struct queue_node_s *q = p_queue->rear, // Q comes before R(ear)
@@ -306,7 +306,7 @@ int queue_enqueue ( queue *const p_queue,  void *const data )
 	r->content = data;
 	
 	// Unlock
-	mutex_unlock(p_queue->_lock);
+	mutex_unlock(&p_queue->_lock);
 
 	// Success
 	return 1;
@@ -345,7 +345,7 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 	if ( p_queue == (void *) 0 ) goto no_queue;
 	
 	// Lock
-	mutex_lock(p_queue->_lock);
+	mutex_lock(&p_queue->_lock);
 	
 	// State check
 	if ( p_queue->front == 0 ) goto queue_empty;
@@ -374,7 +374,7 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 	(void)QUEUE_REALLOC(ret_m, 0);
 		
 	// Unlock
-	mutex_unlock(p_queue->_lock);
+	mutex_unlock(&p_queue->_lock);
 	
 	// Success
 	return 1;
@@ -400,7 +400,7 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 				// No output...
 				
 				// Unlock
-				mutex_unlock(p_queue->_lock);
+				mutex_unlock(&p_queue->_lock);
 
 				// Error
 				return 0;
@@ -415,13 +415,13 @@ bool queue_empty ( const queue *const p_queue )
 	if ( p_queue == (void *)0 ) goto no_queue;
 
 	// Lock
-	mutex_lock(p_queue->_lock);
+	mutex_lock(&p_queue->_lock);
 
 	// Initialized data
 	bool ret = ( p_queue->front == 0 );
 
 	// Unlock
-	mutex_unlock(p_queue->_lock);
+	mutex_unlock(&p_queue->_lock);
 	
 	// Success
 	return ret;
@@ -452,13 +452,13 @@ int queue_destroy ( queue **const pp_queue )
 	queue *p_queue = *pp_queue;
 	
 	// Lock
-	mutex_lock(p_queue->_lock);
+	mutex_lock(&p_queue->_lock);
 
 	// No more queue for end user
 	*pp_queue = 0;
 
 	// Unlock
-	mutex_unlock(p_queue->_lock);
+	mutex_unlock(&p_queue->_lock);
 
 	// Empty the queue
 	while ( queue_empty(p_queue) == false )
