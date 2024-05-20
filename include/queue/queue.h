@@ -39,6 +39,16 @@ struct queue_s;
  */
 typedef struct queue_s queue;
 
+// Initializer
+/** !
+ * This gets called at runtime before main. 
+ * 
+ * @param void
+ * 
+ * @return void
+ */
+DLLEXPORT void queue_init ( void ) __attribute__((constructor));
+
 // Allocaters
 /** !
  *  Allocate memory for a queue
@@ -149,3 +159,13 @@ DLLEXPORT bool queue_empty ( const queue *const p_queue );
  * @return 1 on success, 0 on error
  */
 DLLEXPORT int queue_destroy ( queue **const pp_queue );
+
+// Cleanup
+/** !
+ * This gets called at runtime after main
+ * 
+ * @param void
+ * 
+ * @return void
+ */
+DLLEXPORT void queue_exit ( void ) __attribute__((destructor));

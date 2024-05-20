@@ -24,6 +24,28 @@ struct queue_s
 	mutex _lock;
 };
 
+// Data
+static bool initialized = false;
+
+void queue_init ( void )
+{
+
+    // State check
+    if ( initialized == true ) return;
+
+    // Initialize the log library
+    log_init();
+
+    // Initialize the sync library
+    sync_init();
+
+    // Set the initialized flag
+    initialized = true;
+
+    // Done
+    return;
+}
+
 // Function definitions
 int queue_create ( queue **const pp_queue )
 {
@@ -497,4 +519,23 @@ int queue_destroy ( queue **const pp_queue )
 				return 0;
 		}
 	}
+}
+
+void queue_exit ( void )
+{
+    
+    // State check
+    if ( initialized == false ) return;
+
+    // Clean up the log library
+    log_exit();
+
+    // Clean up the sync library
+    sync_exit();
+
+    // Clear the initialized flag
+    initialized = false;
+
+    // Done
+    return;
 }
