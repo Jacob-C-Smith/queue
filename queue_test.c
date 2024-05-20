@@ -1,17 +1,25 @@
-/*
- * @file queue tester
- * @author Jacob C Smith
+/** !
+ * Queue tester
+ * 
+ * @file queue_test.c
+ * 
+ * @author Jacob Smith
 */
 
 // TODO: Improve documentation
 
-// Include
+// Standard library
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
+// log module
 #include <log/log.h>
 
+// sync module
+#include <sync/sync.h>
+
+// queue module
 #include <queue/queue.h>
 
 // Possible elements
@@ -88,13 +96,13 @@ int construct_CBA_dequeue_CB   ( queue **pp_queue );
 int main ( int argc, const char* argv[] )
 {
 
+    // Supress compiler warnings
+    (void) argc;
+    (void) argv;
+
     // Initialized data
     timestamp t0 = 0,
               t1 = 0;
-
-    // Initialize the timer library
-    timer_init();
-    log_init(0, true);
 
     // Formatting
     printf(
@@ -396,12 +404,6 @@ int construct_CBA_dequeue_CB ( queue **pp_queue )
 
 int test_empty_queue(int(*queue_constructor)(queue **pp_queue), char *name)
 {
-
-    // Initialized_data
-    queue *p_queue = 0;
-    
-    // Call the queue constructor
-    queue_constructor(&p_queue);
 
     log_info("Scenario: %s\n", name);
 

@@ -1,21 +1,22 @@
 /** !
- * @file queue/queue.h 
- * @author Jacob Smith
- * 
  * Include header for queue library
+ * 
+ * @file queue/queue.h
+ *  
+ * @author Jacob Smith
  */
 
 // Include guard
 #pragma once
-
-// sync submodule
-#include <sync/sync.h>
 
 // Standard library
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
+// sync module
+#include <sync/sync.h>
 
 // Platform dependent macros
 #ifdef _WIN64
@@ -89,7 +90,7 @@ DLLEXPORT int queue_from_contents ( queue **const pp_queue, void * const* const 
  *
  * @return element value on success, null pointer on error
  */
-DLLEXPORT int queue_front ( const queue *const p_queue, const void **const pp_value );
+DLLEXPORT int queue_front ( queue *const p_queue, const void **const pp_value );
 
 /** !
  *  Get the element at the rear of the queue
@@ -100,7 +101,7 @@ DLLEXPORT int queue_front ( const queue *const p_queue, const void **const pp_va
  *
  * @return element on success, null pointer on error
  */
-DLLEXPORT int queue_rear ( const queue *const p_queue, const void **const pp_value );
+DLLEXPORT int queue_rear ( queue *const p_queue, const void **const pp_value );
 
 // Mutators
 /** !

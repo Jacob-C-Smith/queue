@@ -1,7 +1,18 @@
+/** !
+ * Queue example program
+ * 
+ * @file main.c
+ * 
+ * @author Jacob Smith
+ */
+
+// Standard library
 #include <stdio.h>
 
+// queue module
 #include <queue/queue.h>
 
+// Entry point
 int main ( int argc, const char *argv[] )
 {
 
@@ -66,5 +77,5 @@ int main ( int argc, const char *argv[] )
 	queue_destroy(&p_queue);
 
 	// Success
-	return 0;
+	return EXIT_SUCCESS;
 }
