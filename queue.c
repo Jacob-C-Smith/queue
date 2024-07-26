@@ -206,7 +206,7 @@ int queue_from_contents ( queue **const pp_queue, void* const* const pp_contents
 	}
 }
 
-int queue_front ( queue *const p_queue, const void ** const pp_value )
+int queue_front ( queue *const p_queue, void ** const pp_value )
 {
 
 	// Argument check
@@ -255,7 +255,7 @@ int queue_front ( queue *const p_queue, const void ** const pp_value )
 	}
 }
  
-int queue_rear ( queue *const p_queue, const void **const pp_value )
+int queue_rear ( queue *const p_queue, void **const pp_value )
 {
 
 	// Argument check
@@ -304,7 +304,7 @@ int queue_rear ( queue *const p_queue, const void **const pp_value )
 	}
 }
  
-int queue_enqueue ( queue *const p_queue,  void *const data )
+int queue_enqueue ( queue *const p_queue, void *const data )
 {
 
 	// Argument check
@@ -377,7 +377,7 @@ int queue_enqueue ( queue *const p_queue,  void *const data )
 	}
 }
  
-int queue_dequeue ( queue *const p_queue, const void **const pp_value )
+int queue_dequeue ( queue *const p_queue, void **const pp_value )
 {
 	
 	// Argument check
@@ -410,7 +410,7 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 		*pp_value = ret_m->content;
 
 	// Free the memory
-	(void)QUEUE_REALLOC(ret_m, 0);
+	ret_m = QUEUE_REALLOC(ret_m, 0);
 		
 	// Unlock
 	mutex_unlock(&p_queue->_lock);
@@ -447,7 +447,7 @@ int queue_dequeue ( queue *const p_queue, const void **const pp_value )
 	}
 }
 
-bool queue_empty ( const queue *const p_queue )
+bool queue_empty ( queue *const p_queue )
 {
 	
 	// Argument check

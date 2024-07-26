@@ -187,7 +187,7 @@ int print_time_pretty ( double seconds )
     return 1;
 }
 
-int run_tests()
+int run_tests ( void )
 {
 
     // ... -> []
@@ -421,10 +421,6 @@ int test_empty_queue(int(*queue_constructor)(queue **pp_queue), char *name)
 int test_one_element_queue   ( int (*queue_constructor)(queue **), char *name, void **elements )
 {
 
-    // Initialized_data
-    queue *p_queue = 0;
-    
-
     log_info("Scenario: %s\n", name);
 
     print_test(name, "queue_front"    , test_front(queue_constructor, elements[0], match) );
@@ -464,12 +460,6 @@ int test_two_element_queue   ( int (*queue_constructor)(queue **), char *name, v
 int test_three_element_queue   ( int (*queue_constructor)(queue **), char *name, void **elements )
 {
 
-    // Initialized_data
-    queue *p_queue = 0;
-    
-    // Call the queue constructor
-    queue_constructor(&p_queue);
-
     log_info("Scenario: %s\n", name);
 
     print_test(name, "queue_front"  , test_front(queue_constructor, elements[2], match) );
@@ -479,7 +469,7 @@ int test_three_element_queue   ( int (*queue_constructor)(queue **), char *name,
     for (size_t i = 0; elements[i]; i++)
     {
         char *test_name = calloc(15+1, sizeof(char));
-        sprintf(test_name, "queue_dequeue_%lld", i);
+        sprintf(test_name, "queue_dequeue_%zu", i);
         print_test(name, test_name , test_dequeue(queue_constructor, elements[2-i], i+1, match) );
         free(test_name);
     }
@@ -523,7 +513,7 @@ int print_test ( const char *scenario_name, const char *test_name, bool passed )
     return 1;
 }
 
-int print_final_summary ()
+int print_final_summary ( void )
 {
 
     // Accumulate
@@ -555,7 +545,7 @@ bool test_front ( int (*queue_constructor)(queue **), void *expected_value, resu
     queue_constructor(&p_queue);
 
     // Get the front
-    result = queue_front(p_queue, &result_value);
+    result = (result_t) queue_front(p_queue, &result_value);
 
     // Check the result
     if (result == zero)
@@ -592,7 +582,7 @@ bool test_rear ( int (*queue_constructor)(queue **), void *expected_value, resul
     queue_constructor(&p_queue);
 
     // Get the rear
-    result = queue_rear(p_queue, &result_value);
+    result = (result_t) queue_rear(p_queue, &result_value);
 
     // Check the result
     if (result == zero)
@@ -627,7 +617,7 @@ bool test_enqueue ( int (*queue_constructor)(queue **), void *value, result_t  e
     // Build the queue
     queue_constructor(&p_queue);
 
-    result = queue_enqueue(p_queue, value);
+    result = (result_t) queue_enqueue(p_queue, value);
 
     // Free the queue
     queue_destroy(&p_queue);
@@ -648,9 +638,7 @@ bool test_dequeue ( int (*queue_constructor)(queue **), void *expected_value  , 
     queue_constructor(&p_queue);
     
     for (size_t i = 0; i < num_dequeues; i++)
-    {
-        result = queue_dequeue(p_queue, &result_value);
-    }
+        result = (result_t) queue_dequeue(p_queue, &result_value);
     
     
     // Check the result
@@ -675,6 +663,9 @@ bool test_empty ( int (*queue_constructor)(queue **), void **expected_values, re
     // Initialized data
     result_t  result = 0;
     queue    *p_queue = 0;
+
+    // Unused
+    (void) expected_values;
 
     // Build the queue
     queue_constructor(&p_queue);
